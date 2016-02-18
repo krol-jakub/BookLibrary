@@ -14,17 +14,24 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Perspective"
             class="booklibrary.perspectives.Perspective"
-            id="BookLibrary.perspective">
+            icon="icons/alt_window_32.gif"
+            id="BookLibrary.perspective"
+            name="Book Library">
       </perspective>
    </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="View"
+            name="Book List"
             class="booklibrary.views.View"
             id="BookLibrary.view">
+      </view>
+      <view
+            class="booklibrary.views.AuthorList"
+            id="BookLibrary.view2"
+            name="Author List"
+            restorable="true">
       </view>
    </extension>
    <extension
@@ -32,11 +39,19 @@
       <perspectiveExtension
             targetID="*">
          <view
-               standalone="true"
+               id="BookLibrary.view"
                minimized="false"
-               relative="org.eclipse.ui.editorss"
+               ratio="0.33"
                relationship="left"
-               id="BookLibrary.view">
+               relative="org.eclipse.ui.editorss"
+               standalone="true">
+         </view>
+         <view
+               id="BookLibrary.view2"
+               minimized="false"
+               ratio="0.67"
+               relationship="right"
+               relative="org.eclipse.ui.editorss">
          </view>
       </perspectiveExtension>
    </extension>
@@ -49,6 +64,11 @@
             <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Exit">
+            </command>
+            <command
+                  commandId="org.eclipse.gef.zoom_in"
+                  label="Zoom"
+                  style="push">
             </command>
          </menu>
       </menuContribution>

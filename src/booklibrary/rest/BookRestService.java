@@ -23,7 +23,7 @@ public class BookRestService {
 	private Mapper mapper = new Mapper();
 	
 	public BookTo sendPOST(String jsonString) throws ClientProtocolException, IOException {
-		String url = "http://localhost:9721/workshop/services/books/book/";
+		String url = "http://localhost:9721/workshop/services/books/book";
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(url);
