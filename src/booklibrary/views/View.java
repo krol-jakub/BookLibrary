@@ -27,38 +27,31 @@ import booklibrary.provider.BookProvider;
 import booklibrary.rest.BookRestService;
 
 public class View extends ViewPart {
-	public View() {
-	}
+	
 	public static final String ID = "BookLibrary.view";
-
-	private Text titlePrefix;
-	private Button btnDeleteBook;
-	private Button btnSearch;
 	private TableViewer viewer;
 	private Table table;
-
 	private BookRestService bookRestService = new BookRestService();
-
 	private List<BookTo> bookToList = new ArrayList<>();
+	
+	public View() {
+		
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(3, false));
 
-		Label lblSearchBook = new Label(parent, SWT.NONE);
-		lblSearchBook.setText("Search:");
-
-		titlePrefix = new Text(parent, SWT.BORDER);
+		Label searchText = new Label(parent, SWT.NONE);
+		searchText.setText("Search:");
+		Text titlePrefix = new Text(parent, SWT.BORDER);
 		titlePrefix.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-
-		btnSearch = new Button(parent, SWT.NONE);
-		btnSearch.setText("Search");
-
-		Button btnAddBook = new Button(parent, SWT.NONE);
-		btnAddBook.setText("Add book");
-
-		btnDeleteBook = new Button(parent, SWT.NONE);
-		btnDeleteBook.setText("Delete book");
+		Button searchButton = new Button(parent, SWT.NONE);
+		searchButton.setText("Search");
+		Button addButton = new Button(parent, SWT.NONE);
+		addButton.setText("Add");
+		Button deleteButton = new Button(parent, SWT.NONE);
+		deleteButton.setText("Delete");
 
 		/*btnAddBook.addSelectionListener(new SelectionListener() {
 
@@ -75,12 +68,18 @@ public class View extends ViewPart {
 
 			}
 		});*/
-
-		btnSearch.addSelectionListener(new SelectionListener() {
+		
+		// TODO : Mozna wyszukiwanie bez RESTa, na liscie
+		searchButton.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				updateBooksList(titlePrefix.getText());
+				try {
+					bookToList = bookRestService.sendGET(titlePrefix.getText());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				viewer.setInput(bookToList);
 			}
 
 			@Override
@@ -89,7 +88,7 @@ public class View extends ViewPart {
 			}
 		});
 		
-		btnDeleteBook.addSelectionListener(new SelectionListener() {
+		deleteButton.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -98,7 +97,8 @@ public class View extends ViewPart {
 				if(book != null){
 					try {
 						bookRestService.sendDELETE(book.getId());
-						updateBooksList("");
+						bookToList = bookRestService.sendGET("");
+						viewer.setInput(bookToList);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -112,16 +112,30 @@ public class View extends ViewPart {
 			}
 		});
 
-		createViewer(parent);
+		try {
+			createViewer(parent);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 
-	private void createViewer(Composite parent) {
+	private void createViewer(Composite parent) throws IOException {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		createColumns(parent, viewer);
 		table = viewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		// TODO: Poczytaj o tym filtrowaniu
+		/*viewer.addFilter(new ViewerFilter() {
+			
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		});*/
 
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setInput(BookProvider.INSTANCE.getBooks());
@@ -173,15 +187,6 @@ public class View extends ViewPart {
 		column.setResizable(true);
 		column.setMoveable(true);
 		return viewerColumn;
-	}
-	
-	private void updateBooksList(String titlePrefix) {
-		try {
-			bookToList = bookRestService.sendGET(titlePrefix);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		viewer.setInput(bookToList);
 	}
 
 	@Override

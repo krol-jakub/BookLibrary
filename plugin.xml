@@ -63,12 +63,14 @@
                label="File">
             <command
                   commandId="org.eclipse.ui.file.exit"
-                  label="Exit">
+                  label="Exit"
+                  tooltip="Exits this library">
             </command>
             <command
                   commandId="org.eclipse.gef.zoom_in"
                   label="Zoom"
-                  style="push">
+                  style="push"
+                  tooltip="Zooms, but what?">
             </command>
          </menu>
       </menuContribution>

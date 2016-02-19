@@ -12,16 +12,15 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		super(configurer);
 	}
 
-	public ActionBarAdvisor createActionBarAdvisor(
-			IActionBarConfigurer configurer) {
+	public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
 		return new ApplicationActionBarAdvisor(configurer);
 	}
 
 	public void preWindowOpen() {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		configurer.setInitialSize(new Point(800, 600));
-		configurer.setShowCoolBar(false);
-		configurer.setShowStatusLine(false);
+		configurer.setShowCoolBar(true);
+		configurer.setShowStatusLine(true);
 		configurer.setShowMenuBar(true);
 		configurer.setShowPerspectiveBar(true);
 		configurer.setTitle("Book Library");
